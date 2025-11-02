@@ -1,0 +1,32 @@
+{% extends "../base/base.html" %}
+
+{% block title %}Submit - Disc Golf Coaching{% endblock %}
+
+{% block template %}
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="card-title">Send a message or video</h2>
+          {% if request.GET.sent %}
+            <div class="alert alert-success">Thanks — your message was sent.</div>
+          {% endif %}
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% for err in field.errors %}
+                  <div class="text-danger small">{{ err }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <button class="btn btn-primary">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

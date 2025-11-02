@@ -1,0 +1,62 @@
+{% extends "../base/base.html" %}
+
+{% block title %}Message - Disc Golf Coaching{% endblock %}
+
+{% block template %}
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h4 class="card-title">Message from {{ message.sender_name|default:'Anonymous' }}</h4>
+          <div class="small text-muted mb-2">{{ message.sender_email }} • {{ message.created_at }}</div>
+          <div class="mb-3">{{ message.text|linebreaks }}</div>
+          {% if message.video %}
+            <div class="ratio ratio-16x9">
+              <video controls>
+                <source src="{{ message.video.url }}" type="video/mp4">
+              </video>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5>Respond</h5>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% for err in field.errors %}
+                  <div class="text-danger small">{{ err }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <button class="btn btn-success">Send response</button>
+          </form>
+        </div>
+      </div>
+
+      <h5>Previous responses</h5>
+      <div class="list-group">
+        {% for r in message.responses.all %}
+          <div class="list-group-item">
+            <div>{{ r.text|linebreaks }}</div>
+            {% if r.video %}
+              <div class="ratio ratio-16x9 mt-2">
+                <video controls>
+                  <source src="{{ r.video.url }}" type="video/mp4">
+                </video>
+              </div>
+            {% endif %}
+            <small class="text-muted">{{ r.created_at }}</small>
+          </div>
+        {% empty %}
+          <div class="list-group-item">No responses yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

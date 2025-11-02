@@ -1,0 +1,32 @@
+{% extends "../base/base.html" %}
+
+{% block title %}Home - Disc Golf Coaching{% endblock %}
+
+{% block template %}
+	<header class="p-5 mb-4 bg-light rounded-3">
+		<div class="container-fluid py-3">
+			<h1 class="display-5 fw-bold">Welcome to Disc Golf Coaching</h1>
+			<p class="col-md-8 fs-5">Send us a short video of your throw or a message. The coach will review and respond with tips or a video analysis.</p>
+			<a class="btn btn-primary btn-lg" href="{% url 'coachingsite:submit' %}">Submit a video</a>
+		</div>
+	</header>
+
+	<div class="row g-4">
+		<div class="col-md-6">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<h5 class="card-title">How it works</h5>
+					<p class="card-text">Upload a short clip (mp4 preferred) or message. The coach will watch, give feedback, and optionally reply with a video demonstration.</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<h5 class="card-title">Tips & Resources</h5>
+					<p class="card-text">Find quick tips, upcoming clinics, and drills to improve your distance and accuracy.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

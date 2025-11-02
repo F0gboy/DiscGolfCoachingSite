@@ -15,10 +15,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from coachingsite.views import article_list
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from coachingsite.views import register
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('articles/', article_list, name='article_list'),
+    path('accounts/', include('django.contrib.auth.urls')),  # login/logout
+    path('accounts/register/', register, name='register'),
+    path('', include('coachingsite.urls', namespace='coachingsite')),
 ]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
