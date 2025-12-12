@@ -1,0 +1,132 @@
+{% extends "../base/base.html" %}
+
+{% block title %}Conversation{% endblock %}
+
+{% block template %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3 class="mb-0">Conversation with
+        {% if request.user == conversation.athlete %}
+          {{ conversation.coach.username }}
+        {% else %}
+          {{ conversation.athlete.username }}
+        {% endif %}
+      </h3>
+      <small class="text-muted">Updated {{ conversation.updated_at }}</small>
+    </div>
+
+    <div id="chatWindow" class="chat-window border rounded p-3 mb-3" style="height:73vh; overflow:auto;">
+      {% with msgs=thread_messages|dictsort:'created_at' %}
+        {% if msgs %}
+          {% for msg in msgs %}
+            <div class="d-flex mb-3 {% if msg.sender == request.user %}justify-content-end{% else %}justify-content-start{% endif %}">
+              <div class="msg-bubble {% if msg.sender == request.user %}msg-self{% else %}msg-other{% endif %}">
+                <div class="small text-muted">{{ msg.sender.username|default:msg.sender_name }} • {{ msg.created_at }}</div>
+                <div class="mt-1">{{ msg.text }}</div>
+                {% if msg.video %}
+                  <div class="mt-2 position-relative" style="max-width:680px;">
+                    <video class="chat-video" controls style="width:100%; max-width:680px; height:auto; border-radius:8px;" data-fps="30">
+                      <source src="{{ msg.video.url }}" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>
+                    <div class="d-flex gap-1 mt-2">
+                      <button type="button" class="btn btn-sm btn-outline-secondary frame-step" data-step="-1">◀◀ 1f</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary frame-step" data-step="1">1f ▶▶</button>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-muted">No messages yet. Say hello!</div>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="input-group mb-2">
+        {{ composer.text }}
+        <button class="btn btn-secondary" type="button" id="attachBtn">Attach</button>
+      </div>
+      <div class="mb-2" style="display:block;">
+        <!-- file input is visually hidden but present so JS can trigger it -->
+        <div style="position:relative; width:0; height:0; overflow:hidden;">
+          {{ composer.video }}
+        </div>
+        <div id="videoPreview" style="display:none; margin-top:.5rem; max-width:420px;">
+          <video id="previewPlayer" class="chat-video" controls style="width:100%; max-width:420px; height:auto; border-radius:8px;" data-fps="30"></video>
+          <div class="d-flex gap-1 mt-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="previewPrev">◀◀ 1f</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="previewNext">1f ▶▶</button>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary" type="submit">Send</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    // auto-scroll to bottom
+    const chatWindow = document.getElementById('chatWindow');
+    if (chatWindow) {
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+    // attach button wiring and preview
+    const attachBtn = document.getElementById('attachBtn');
+    const fileInput = document.querySelector('input[type=file]');
+    const videoPreview = document.getElementById('videoPreview');
+    const previewPlayer = document.getElementById('previewPlayer');
+    if (attachBtn) {
+      attachBtn.addEventListener('click', function(){
+        if (fileInput) fileInput.click();
+      });
+    }
+    if (fileInput) {
+      fileInput.addEventListener('change', function(e){
+        const file = e.target.files[0];
+        if (!file) return;
+        const url = URL.createObjectURL(file);
+        previewPlayer.src = url;
+        videoPreview.style.display = 'block';
+      });
+    }
+    // frame-step functionality (simple seek forward/back by 1/fps seconds)
+    function stepFrame(video, step) {
+      if (!video) return;
+      const fps = parseFloat(video.dataset.fps) || 30;
+      const stepSec = step / fps;
+      const duration = video.duration;
+      const current = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+      const target = Number.isFinite(duration)
+        ? Math.max(0, Math.min(duration, current + stepSec))
+        : current + stepSec;
+      try {
+        video.pause();
+        video.currentTime = target;
+      } catch (err) {
+        console.warn('Frame step failed', err);
+      }
+    }
+
+    document.querySelectorAll('.frame-step').forEach(btn => {
+      btn.addEventListener('click', function(){
+        const step = parseInt(this.dataset.step, 10) || 1;
+        const video = this.closest('.position-relative').querySelector('video.chat-video');
+        if (video) stepFrame(video, step);
+      });
+    });
+
+    const previewPrev = document.getElementById('previewPrev');
+    const previewNext = document.getElementById('previewNext');
+    if (previewPrev) previewPrev.addEventListener('click', () => stepFrame(previewPlayer, -1));
+    if (previewNext) previewNext.addEventListener('click', () => stepFrame(previewPlayer, 1));
+  </script>
+{% endblock %}

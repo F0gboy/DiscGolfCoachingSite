@@ -19,14 +19,22 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from coachingsite.views import register
+from django.contrib.auth import views as auth_views
+from coachingsite.forms import CustomAuthenticationForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('django.contrib.auth.urls')),  # login/logout
+    # Provide a custom login view to use our Bootstrap-friendly form
+    path('accounts/login/', auth_views.LoginView.as_view(authentication_form=CustomAuthenticationForm), name='login'),
+    path('accounts/', include('django.contrib.auth.urls')),  # login/logout (other auth views)
     path('accounts/register/', register, name='register'),
     path('', include('coachingsite.urls', namespace='coachingsite')),
 ]
 
-# Serve media files in development
+# Serve media files and debug toolbar in development
 if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

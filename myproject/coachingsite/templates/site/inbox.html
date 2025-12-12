@@ -7,16 +7,16 @@
     <div class="col-md-10">
       <h2>Inbox</h2>
       <ul class="list-group">
-        {% for msg in messages %}
+        {% for convo in conversations %}
           <li class="list-group-item d-flex justify-content-between align-items-start">
             <div>
-              <a class="fw-bold" href="{% url 'coachingsite:message_detail' msg.id %}">{{ msg }}</a>
-              <div class="small text-muted">{{ msg.sender_email }} • {{ msg.created_at }}</div>
+              <a class="fw-bold" href="{% url 'coachingsite:conversation_detail' convo.id %}">{{ convo.subject|default:convo }}</a>
+              <div class="small text-muted">With: {% if request.user == convo.coach %}{{ convo.athlete.username }}{% else %}{{ convo.coach.username }}{% endif %} • {{ convo.updated_at }}</div>
             </div>
-            <span class="badge rounded-pill {% if msg.responded %}bg-success{% else %}bg-secondary{% endif %}">{% if msg.responded %}Responded{% else %}New{% endif %}</span>
+            <span class="badge rounded-pill bg-secondary">Thread</span>
           </li>
         {% empty %}
-          <li class="list-group-item">No messages yet.</li>
+          <li class="list-group-item">No conversations yet.</li>
         {% endfor %}
       </ul>
     </div>

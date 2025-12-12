@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Article, Message, Response
-from .models import Profile
+from .models import Article, Message, Response, RoundResult, Profile
 
 
 @admin.register(Article)
@@ -23,3 +22,11 @@ class ResponseAdmin(admin.ModelAdmin):
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
 	list_display = ('user', 'role')
+
+
+@admin.register(RoundResult)
+class RoundResultAdmin(admin.ModelAdmin):
+	list_display = ('athlete', 'course_name', 'score_relative', 'played_on', 'created_at')
+	list_filter = ('played_on', 'athlete')
+	search_fields = ('course_name', 'athlete__username', 'athlete__first_name', 'athlete__last_name')
+	readonly_fields = ('created_at',)

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'coachingsite',
 ]
 
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'myproject.middleware.LoginRequiredMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -109,10 +111,12 @@ STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Django Debug Toolbar (only used in development)
+INTERNAL_IPS = ['127.0.0.1']
+
 # Authentication settings
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
-# view name exemptions for the login middleware — keep minimal so most pages require auth
 LOGIN_EXEMPT_URLNAMES = ['login', 'logout', 'register', 'admin:login', 'admin:logout']
 
 # Default primary key field type

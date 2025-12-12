@@ -1,0 +1,72 @@
+{% extends "base/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block template %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Coaching Dashboard</h2>
+    <div class="text-muted">Welcome, {{ request.user.username }}</div>
+  </div>
+
+  <div class="row gy-3">
+    <div class="col-12">
+      <div class="card-clean d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 p-3">
+        <div>
+          <h4 class="mb-1">Track progress</h4>
+          <p class="text-muted mb-0">Log rounds and review performance trends over time.</p>
+        </div>
+        <a class="btn btn-outline-primary" href="{% url 'coachingsite:progress' %}">Open tracker</a>
+      </div>
+    </div>
+
+    <div class="col-12">
+      {% if athletes %}
+        <h4>Message an athlete</h4>
+        <div class="row">
+          {% for athlete in athletes %}
+            <div class="col-md-4 mb-3">
+              <div class="card-clean h-100 p-3">
+                <div class="d-flex align-items-center mb-2">
+                  <div class="avatar-circle me-3">{{ athlete.username|first|upper }}</div>
+                  <div>
+                    <div class="fw-bold">{{ athlete.username }}</div>
+                    <div class="small text-muted">{{ athlete.profile.get_role_display }}</div>
+                  </div>
+                </div>
+                <p class="text-muted small">{{ athlete.email }}</p>
+                <a href="{% url 'coachingsite:start_conversation' athlete.id %}" class="btn btn-primary">Message</a>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-12">No athletes found.</div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <h4>Message a coach</h4>
+        <div class="row">
+          {% for coach in coaches %}
+            <div class="col-md-4 mb-3">
+              <div class="card-clean h-100 p-3">
+                <div class="d-flex align-items-center mb-2">
+                  <div class="avatar-circle me-3">{{ coach.username|first|upper }}</div>
+                  <div>
+                    <div class="fw-bold">{{ coach.username }}</div>
+                    <div class="small text-muted">{{ coach.profile.get_role_display }}</div>
+                  </div>
+                </div>
+                <p class="text-muted small">{{ coach.email }}</p>
+                <a href="{% url 'coachingsite:start_conversation' coach.id %}" class="btn btn-primary">Message</a>
+              </div>
+            </div>
+          {% empty %}
+            <div class="col-12">No coaches found.</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent activity removed -->
+</div>
+{% endblock %}

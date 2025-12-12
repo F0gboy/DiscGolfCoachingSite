@@ -3,28 +3,43 @@
 {% block title %}Home - Disc Golf Coaching{% endblock %}
 
 {% block template %}
-	<header class="p-5 mb-4 bg-light rounded-3">
-		<div class="container-fluid py-3">
-			<h1 class="display-5 fw-bold">Welcome to Disc Golf Coaching</h1>
-			<p class="col-md-8 fs-5">Send us a short video of your throw or a message. The coach will review and respond with tips or a video analysis.</p>
-			<a class="btn btn-primary btn-lg" href="{% url 'coachingsite:submit' %}">Submit a video</a>
-		</div>
-	</header>
-
-	<div class="row g-4">
-		<div class="col-md-6">
-			<div class="card shadow-sm">
-				<div class="card-body">
-					<h5 class="card-title">How it works</h5>
-					<p class="card-text">Upload a short clip (mp4 preferred) or message. The coach will watch, give feedback, and optionally reply with a video demonstration.</p>
-				</div>
+	<section class="py-5 text-center container">
+		<div class="row py-lg-5">
+			<div class="col-lg-8 col-md-10 mx-auto">
+				<h1 class="fw-light">Disc Golf Coaching — Improve Your Game</h1>
+				<p class="lead text-muted">Upload a short clip of your throw or send a message. Our coaches will review and reply with tailored feedback and optional video analysis.</p>
+				<p>
+					<a href="{% url 'login' %}" class="btn btn-primary my-2">Already got an account? - Login</a>
+					<a href="{% url 'register' %}" class="btn btn-outline-secondary my-2">Get started - Create an account</a>
+				</p>
 			</div>
 		</div>
-		<div class="col-md-6">
-			<div class="card shadow-sm">
-				<div class="card-body">
-					<h5 class="card-title">Tips & Resources</h5>
-					<p class="card-text">Find quick tips, upcoming clinics, and drills to improve your distance and accuracy.</p>
+	</section>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="card mb-4 shadow-sm">
+					<div class="card-body">
+						<h5 class="card-title">Personalized Feedback</h5>
+						<p class="card-text">Get coach-reviewed tips tailored for your mechanics and goals.</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card mb-4 shadow-sm">
+					<div class="card-body">
+						<h5 class="card-title">Video Responses</h5>
+						<p class="card-text">Coaches can reply with text or a demonstration video to show technique adjustments.</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card mb-4 shadow-sm">
+					<div class="card-body">
+						<h5 class="card-title">Track Progress</h5>
+						<p class="card-text">Keep your messages and coach responses in one place to monitor improvement over time.</p>
+					</div>
 				</div>
 			</div>
 		</div>

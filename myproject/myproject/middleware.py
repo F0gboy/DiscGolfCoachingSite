@@ -17,14 +17,13 @@ class LoginRequiredMiddleware:
         # Allow access if already authenticated
         if request.user.is_authenticated:
             return self.get_response(request)
-
         path = request.path
-        # Always allow access to auth-related and admin URLs
+        # Always allow access to auth-related and admin URLs and the public root
         login_url = settings.LOGIN_URL
         accounts_prefix = '/accounts/'
         admin_prefix = '/admin/'
 
-        if path.startswith(login_url) or path.startswith(accounts_prefix) or path.startswith(admin_prefix):
+        if path == '/' or path.startswith(login_url) or path.startswith(accounts_prefix) or path.startswith(admin_prefix):
             return self.get_response(request)
 
         # Allow static and media in DEBUG
