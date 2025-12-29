@@ -44,7 +44,6 @@ class Response(models.Model):
 
 
 class Profile(models.Model):
-    """User profile that stores a role for access control."""
     ATHLETE = 'athlete'
     COACH = 'coach'
 
@@ -58,7 +57,6 @@ class Profile(models.Model):
     full_name = models.CharField(max_length=200, blank=True)
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(upload_to='profiles/%Y/%m/%d', blank=True, null=True)
-    # For coaches: which athletes are assigned to them
     assigned_athletes = models.ManyToManyField('auth.User', related_name='assigned_coaches', blank=True)
 
     def __str__(self):

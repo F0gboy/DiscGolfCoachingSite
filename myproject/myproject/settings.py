@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'debug_toolbar',
+    # 'debug_toolbar', 
     'coachingsite',
 ]
 
@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'myproject.middleware.LoginRequiredMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',  
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -111,8 +111,8 @@ STATIC_URL = 'static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Django Debug Toolbar (only used in development)
-INTERNAL_IPS = ['127.0.0.1']
+# Django Debug Toolbar 
+# INTERNAL_IPS = ['127.0.0.1']
 
 # Authentication settings
 LOGIN_URL = '/accounts/login/'

@@ -16,12 +16,10 @@ class MessageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
-        # make the text field a small textarea and add bootstrap class
         if 'text' in self.fields:
             self.fields['text'].widget = forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'placeholder': 'Write a message...'})
         # If a user is provided and is a coach, hide the coach selector
         if user and hasattr(user, 'profile') and user.profile.role == Profile.COACH:
-            # coach field not applicable when coach is composing inside conversation
             if 'coach' in self.fields:
                 del self.fields['coach']
         else:
@@ -36,7 +34,6 @@ class ResponseForm(forms.ModelForm):
 
 
 class RegistrationForm(UserCreationForm):
-    # Exclude the 'admin' role from public registration choices
     role = forms.ChoiceField(choices=[(Profile.ATHLETE, 'Athlete'), (Profile.COACH, 'Coach')], initial=Profile.ATHLETE)
 
     class Meta:
@@ -47,7 +44,6 @@ class RegistrationForm(UserCreationForm):
         super().__init__(*args, **kwargs)
         for name, field in self.fields.items():
             widget = field.widget
-            # Apply Bootstrap classes
             if getattr(widget, 'input_type', '') == 'password':
                 css = 'form-control'
             elif isinstance(field, forms.ChoiceField):
@@ -56,13 +52,11 @@ class RegistrationForm(UserCreationForm):
                 css = 'form-control'
             existing = widget.attrs.get('class', '')
             widget.attrs['class'] = (existing + ' ' + css).strip()
-            # set placeholder where appropriate
             if not widget.attrs.get('placeholder') and name not in ('password1', 'password2'):
                 widget.attrs['placeholder'] = field.label
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-    """AuthenticationForm that adds Bootstrap classes and placeholders to inputs."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if 'username' in self.fields:

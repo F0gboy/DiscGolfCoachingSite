@@ -24,17 +24,16 @@ from coachingsite.forms import CustomAuthenticationForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Provide a custom login view to use our Bootstrap-friendly form
     path('accounts/login/', auth_views.LoginView.as_view(authentication_form=CustomAuthenticationForm), name='login'),
-    path('accounts/', include('django.contrib.auth.urls')),  # login/logout (other auth views)
+    path('accounts/', include('django.contrib.auth.urls')),  
     path('accounts/register/', register, name='register'),
     path('', include('coachingsite.urls', namespace='coachingsite')),
 ]
 
-# Serve media files and debug toolbar in development
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ]
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# if settings.DEBUG:
+# 	import debug_toolbar
+# 	urlpatterns += [
+# 		path('__debug__/', include(debug_toolbar.urls)),
+# 	]

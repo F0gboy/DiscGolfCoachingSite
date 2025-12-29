@@ -16,16 +16,12 @@ from .models import Message, Conversation, Profile, RoundResult
 
 def home(request):
 	"""Render the site home page."""
-	# If user is authenticated, show the coaching platform dashboard.
 	if request.user.is_authenticated:
-		# dashboard will include a coach list for starting conversations
-		# If user is a coach, show all athletes to message
 		if request.user.profile.role == Profile.COACH:
 			athletes = User.objects.filter(profile__role=Profile.ATHLETE)
 			return render(request, "site/dashboard.html", {'athletes': athletes})
 		coaches = User.objects.filter(profile__role=Profile.COACH)
 		return render(request, "site/dashboard.html", {'coaches': coaches})
-	# otherwise show the marketing home page
 	return render(request, "site/home.html")
 
 
@@ -57,8 +53,7 @@ def submit_message(request):
 
 
 def inbox(request):
-	"""List messages for the coach to review."""
-	# show conversations rather than raw messages
+	"""List active conversations for the current user (coach or athlete)"""
 	if request.user.is_authenticated and request.user.profile.role == Profile.COACH:
 		convos = Conversation.objects.filter(coach=request.user).order_by('-updated_at')
 	elif request.user.is_authenticated:
@@ -91,9 +86,6 @@ def conversation_detail(request, pk):
 	user = request.user
 	if not (user == convo.athlete or user == convo.coach or user.is_superuser):
 		return HttpResponseForbidden('You do not have permission to view this conversation')
-	# show messages in thread; only include messages that have non-whitespace text or a video
-	# use a regex lookup to ensure we skip whitespace-only text messages
-	# optimize with select_related/prefetch_related to avoid N+1 lookups in templates
 	thread_msgs = (
 		convo.messages
 		.select_related('sender', 'conversation')
@@ -110,10 +102,8 @@ def conversation_detail(request, pk):
 			# normalize/trim text to avoid saving whitespace-only messages
 			if msg.text:
 				msg.text = msg.text.strip()
-			# if there's no text and no video, ignore the post (don't create empty messages)
 			if not msg.text and not msg.video:
 				return redirect('coachingsite:conversation_detail', pk=pk)
-			# Prevent messaging yourself
 			if convo.coach == convo.athlete:
 				return HttpResponseForbidden('You cannot message yourself')
 			msg.sender = request.user
@@ -128,11 +118,8 @@ def conversation_detail(request, pk):
 
 @login_required
 def start_conversation(request, coach_id):
-	# only athletes can start conversations (or any authenticated user if you prefer)
-	# The URL param may be a coach id when an athlete initiates,
-	# or an athlete id when a coach initiates. Handle both cases.
+	# Create or reuse a conversation between the current user and the target user
 	initiator = request.user
-	# If initiator is a coach, they want to message the athlete whose id is passed.
 	if initiator.profile.role == Profile.COACH:
 		coach = initiator
 		athlete = get_object_or_404(User, pk=coach_id)
@@ -140,7 +127,6 @@ def start_conversation(request, coach_id):
 		athlete = initiator
 		coach = get_object_or_404(User, pk=coach_id)
 
-	# disallow starting a conversation with yourself
 	if coach == athlete:
 		return HttpResponseForbidden('You cannot start a conversation with yourself')
 

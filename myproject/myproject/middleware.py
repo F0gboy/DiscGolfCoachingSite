@@ -18,7 +18,7 @@ class LoginRequiredMiddleware:
         if request.user.is_authenticated:
             return self.get_response(request)
         path = request.path
-        # Always allow access to auth-related and admin URLs and the public root
+        # Always allow access to auth related and admin URLs and the public root
         login_url = settings.LOGIN_URL
         accounts_prefix = '/accounts/'
         admin_prefix = '/admin/'
